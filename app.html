@@ -2,823 +2,403 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EcoTrack Logistics | Smart Delivery System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrack Logistics | Sustainable Delivery Solutions</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
-        /* --- CSS STYLES --- */
+        /* --- SHARED VARIABLES --- */
         :root {
-            --primary: #10B981; /* Eco Green */
+            --primary: #10B981;
             --primary-dark: #059669;
-            --secondary: #1F2937; /* Dark Gray */
-            --bg-light: #F3F4F6;
-            --white: #ffffff;
+            --secondary: #1F2937;
             --text-dark: #111827;
             --text-gray: #6B7280;
-            --danger: #EF4444;
-            --warning: #F59E0B;
-            --blue: #3B82F6;
+            --bg-light: #F3F4F6;
+            --white: #ffffff;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-light); color: var(--text-dark); height: 100vh; overflow: hidden; }
-
-        /* --- LOGIN PORTAL --- */
-        #login-portal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary-dark) 100%);
-            display: flex; justify-content: center; align-items: center; z-index: 2000;
-            padding: 1rem;
-        }
-        .login-card {
-            background: var(--white); padding: 2.5rem; border-radius: 1rem;
-            width: 100%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .login-logo { font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem; }
-        .role-selector { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; justify-content: center; flex-wrap: wrap; }
-        .role-btn {
-            padding: 0.5rem 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem;
-            background: white; cursor: pointer; transition: all 0.2s; font-size: 0.85rem;
-            flex: 1; min-width: 80px; text-align: center;
-        }
-        .role-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
         
-        .input-group { margin-bottom: 1rem; text-align: left; }
-        .input-group label { display: block; font-size: 0.875rem; color: var(--text-gray); margin-bottom: 0.25rem; }
-        .input-group input, .input-group select, .input-group textarea {
-            width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem;
-            outline: none; transition: border-color 0.2s; font-size: 1rem;
-        }
-        .input-group input:focus, .input-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
+        body { color: var(--text-dark); overflow-x: hidden; }
+
+        /* --- UTILITIES --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+        .btn { display: inline-block; padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.3s; text-decoration: none; border: none; text-align: center; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .btn-outline { border: 2px solid white; color: white; background: transparent; }
+        .btn-outline:hover { background: white; color: var(--secondary); }
         
-        .btn-primary {
-            width: 100%; padding: 0.75rem; background: var(--primary); color: white;
-            border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;
-            transition: background 0.2s; font-size: 1rem;
-        }
-        .btn-primary:hover { background: var(--primary-dark); }
-        .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; width: auto; }
-
-        .hint { font-size: 0.75rem; color: var(--text-gray); margin-top: 1rem; background: #f9fafb; padding: 0.5rem; border-radius: 4px; }
-
-        /* --- MAIN APP LAYOUT --- */
-        #app-container { display: none; height: 100vh; display: flex; overflow: hidden; }
-        #app-container.hidden { display: none !important; }
-
-        /* Sidebar */
-        aside {
-            width: 260px; background: var(--secondary); color: white;
-            display: flex; flex-direction: column; padding: 1.5rem;
-            transition: all 0.3s; z-index: 100;
-        }
-        .brand { font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
-        .brand i { color: var(--primary); }
+        /* --- NAVIGATION --- */
+        nav { padding: 1.5rem 0; position: absolute; width: 100%; top: 0; z-index: 1000; }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.5rem; text-decoration: none; z-index: 1002; }
+        .logo i { color: var(--primary); }
         
-        .nav-links { list-style: none; flex: 1; overflow-y: auto; }
-        .nav-item {
-            padding: 0.75rem 1rem; margin-bottom: 0.5rem; border-radius: 0.5rem;
-            cursor: pointer; display: flex; align-items: center; gap: 0.75rem;
-            color: #9CA3AF; transition: all 0.2s;
-        }
-        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); color: white; }
-        .nav-item i { width: 20px; text-align: center; }
-
-        .user-profile {
-            border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;
-            display: flex; align-items: center; gap: 0.75rem; margin-top: auto;
-        }
-        .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
-
-        /* Main Content */
-        main { flex: 1; overflow-y: auto; background: var(--bg-light); padding: 2rem; position: relative; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-        h2 { font-size: 1.75rem; color: var(--text-dark); }
-
-        /* Dashboard Cards */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-card { background: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; }
-        .stat-info h3 { font-size: 2rem; font-weight: 700; color: var(--text-dark); }
-        .stat-info p { color: var(--text-gray); font-size: 0.875rem; }
-        .stat-icon { width: 50px; height: 50px; border-radius: 50%; background: #ECFDF5; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; margin-left: 1rem; }
-
-        /* Content Sections */
-        .section { display: none; animation: fadeIn 0.3s ease-in-out; }
-        .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Map Container */
-        .map-wrapper { height: 500px; width: 100%; border-radius: 1rem; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 2px solid white; position: relative; }
-        #map { height: 100%; width: 100%; z-index: 1; }
-
-        /* Tables & Lists */
-        .table-card { background: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; }
-        .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #e5e7eb; vertical-align: middle; }
-        th { background: #f9fafb; font-weight: 600; color: var(--text-gray); font-size: 0.75rem; text-transform: uppercase; }
+        /* Desktop Menu */
+        .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+        .nav-links a { color: rgba(255,255,255,0.9); text-decoration: none; font-size: 0.95rem; transition: color 0.3s; }
+        .nav-links a:hover { color: white; }
         
-        /* Badges */
-        .status-badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
-        .status-transit { background: #DBEAFE; color: #1E40AF; }
-        .status-delivered { background: #D1FAE5; color: #065F46; }
-        .status-pending { background: #FEE2E2; color: #991B1B; }
-        .status-resolved { background: #E5E7EB; color: #374151; }
-        .status-unassigned { background: #FEF3C7; color: #92400E; }
+        /* Mobile Menu Button */
+        .mobile-toggle { display: none; color: white; font-size: 1.5rem; cursor: pointer; z-index: 1002; }
 
-        /* JOB CARD STYLES */
-        .job-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
-        .job-card { background: white; border-radius: 0.75rem; padding: 1.5rem; border: 1px solid #e5e7eb; transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .job-card:hover { transform: translateY(-3px); border-color: var(--primary); }
-        .job-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .job-id { font-weight: 700; color: var(--text-dark); }
-        .job-details { font-size: 0.9rem; color: var(--text-gray); margin-bottom: 1.5rem; }
-        .job-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
-
-        /* Routing Controls & Helpers */
-        .route-controls { background: white; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
-        .route-info { background: rgba(255,255,255,0.9); padding: 10px; border-radius: 5px; position: absolute; top: 10px; right: 10px; z-index: 999; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .flex-row { display: flex; gap: 2rem; }
-        .flex-col-1 { flex: 1; }
-        .route-stats { display: flex; gap: 1rem; margin-bottom: 1rem; }
-        .hidden-el { display: none !important; }
-        .status-select { padding: 0.35rem; border-radius: 4px; border: 1px solid #d1d5db; background: white; font-size: 0.85rem; }
-        .booking-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-
-        /* --- ANIMATION & MODALS --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 3000;
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        /* Mobile Menu Overlay */
+        .mobile-menu {
+            position: fixed; top: 0; right: -100%; width: 250px; height: 100vh;
+            background: var(--secondary); padding: 5rem 2rem 2rem;
+            transition: right 0.3s ease-in-out; z-index: 1001;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column; gap: 1.5rem;
         }
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .mobile-menu.active { right: 0; }
+        .mobile-menu a { color: white; text-decoration: none; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; }
+
+        /* Mobile Close Button */
+        .mobile-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .mobile-close:hover { color: var(--primary); }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            background: linear-gradient(135deg, var(--secondary) 0%, #111827 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px; /* Space for nav */
+        }
         
-        .animation-card {
-            background: white; width: 90%; max-width: 400px; padding: 2rem;
-            border-radius: 1rem; text-align: center; position: relative;
+        .hero::before {
+            content: ''; position: absolute; top: -10%; right: -5%; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none;
         }
 
-        .step-list { list-style: none; text-align: left; margin-top: 1.5rem; }
-        .step-item { display: flex; align-items: center; margin-bottom: 1rem; color: #9CA3AF; transition: all 0.3s; }
-        .step-item.active { color: var(--text-dark); font-weight: 600; }
-        .step-item.completed { color: var(--primary); }
-        .step-icon { width: 30px; display: flex; justify-content: center; margin-right: 10px; }
+        .hero-content { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 2rem; }
+        .hero-text { flex: 1; max-width: 600px; color: white; animation: fadeUp 0.8s ease-out; }
+        .hero-text h1 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 1.5rem; font-weight: 800; }
+        .hero-text span { color: var(--primary); }
+        .hero-text p { font-size: 1.1rem; color: rgba(255,255,255,0.7); margin-bottom: 2rem; line-height: 1.6; }
+        .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+        .hero-image { flex: 1; display: flex; justify-content: flex-end; animation: fadeIn 1s ease-out 0.3s backwards; }
+        .hero-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 2rem; border-radius: 1rem; border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%; max-width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
         
-        .spinner { animation: spin 1s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .success-icon { 
-            width: 80px; height: 80px; background: #D1FAE5; color: var(--primary);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 2.5rem; margin: 0 auto 1.5rem; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* --- TRACKING WIDGET --- */
+        .track-widget {
+            background: white; padding: 2rem; border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            margin-top: -60px; position: relative; z-index: 10;
         }
-        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        .track-form { display: flex; gap: 1rem; margin-top: 1rem; }
+        .track-input {
+            flex: 1; padding: 1rem; border: 2px solid #E5E7EB; border-radius: 0.5rem;
+            font-size: 1rem; outline: none; transition: border-color 0.3s;
+        }
+        .track-input:focus { border-color: var(--primary); }
 
-        /* --- RESPONSIVE --- */
+        /* --- FEATURES SECTION --- */
+        .features { padding: 6rem 0; background: var(--bg-light); }
+        .section-header { text-align: center; margin-bottom: 3rem; }
+        .section-header h2 { font-size: 2.25rem; color: var(--secondary); margin-bottom: 1rem; }
+        
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .feature-card {
+            background: white; padding: 2rem; border-radius: 1rem;
+            transition: transform 0.3s; border: 1px solid transparent;
+        }
+        .feature-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.1); }
+        .icon-box {
+            width: 50px; height: 50px; background: #ECFDF5; color: var(--primary);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem; margin-bottom: 1rem;
+        }
+
+        /* --- STATS STRIP --- */
+        .stats-strip { background: var(--secondary); color: white; padding: 4rem 0; }
+        .stats-container { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 2rem; text-align: center; }
+        .stat-item h3 { font-size: 2.5rem; color: var(--primary); margin-bottom: 0.5rem; }
+        
+        /* --- FOOTER --- */
+        footer { background: #111827; color: white; padding: 4rem 0 2rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 0.5rem; }
+        .footer-col ul li a { color: #9CA3AF; text-decoration: none; }
+        .copyright { text-align: center; color: #6B7280; font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- RESPONSIVE MEDIA QUERIES --- */
+        @media (max-width: 992px) {
+            .hero-text h1 { font-size: 3rem; }
+        }
+
         @media (max-width: 768px) {
-            #app-container { flex-direction: column; }
-            aside { width: 100%; height: auto; flex-direction: row; align-items: center; padding: 0.75rem 1rem; flex-shrink: 0; justify-content: space-between; }
-            .brand { margin-bottom: 0; font-size: 1.25rem; }
-            .brand span { display: none; }
-            .nav-links { display: flex; flex-direction: row; overflow-x: auto; margin: 0 1rem; gap: 0.5rem; align-items: center; -ms-overflow-style: none; scrollbar-width: none; }
-            .nav-links::-webkit-scrollbar { display: none; }
-            .nav-item { margin-bottom: 0; padding: 0.5rem 0.75rem; white-space: nowrap; font-size: 1.1rem; }
-            .nav-text { display: none; }
-            .user-profile { border-top: none; border-left: 1px solid rgba(255,255,255,0.1); padding-top: 0; padding-left: 1rem; margin-top: 0; }
-            .user-profile div { display: none; }
-            main { padding: 1rem; padding-bottom: 2rem; }
-            header { margin-bottom: 1.5rem; }
-            .stats-grid { grid-template-columns: 1fr; gap: 1rem; }
-            .flex-row { flex-direction: column; gap: 1.5rem; }
-            .route-stats { flex-direction: row; }
-            .booking-grid { grid-template-columns: 1fr; }
-            .route-controls { flex-direction: column; align-items: stretch; }
-            .route-controls input { width: 100% !important; margin-bottom: 0.5rem; }
-            .route-controls button { width: 100% !important; }
-            .map-wrapper, #route-map { height: 350px !important; }
-            .login-card { padding: 1.5rem; width: 95%; }
+            /* Navigation */
+            .nav-links { display: none; } /* Hide desktop menu */
+            .mobile-toggle { display: block; } /* Show hamburger */
+            
+            /* Hero */
+            .hero { text-align: center; padding-top: 100px; padding-bottom: 4rem; min-height: auto; }
+            .hero-content { flex-direction: column; }
+            .hero-image { display: none; } /* Hide 3D card on mobile for cleaner look */
+            .hero-text { margin: 0 auto; }
+            .hero-text h1 { font-size: 2.5rem; }
+            .hero-btns { justify-content: center; width: 100%; }
+            .hero-btns .btn { width: 100%; }
+
+            /* Tracking Widget */
+            .track-widget { margin-top: 0; margin-bottom: 2rem; }
+            .track-form { flex-direction: column; }
+            .track-form button { width: 100%; }
+            
+            /* Stats */
+            .stats-container { flex-direction: column; gap: 3rem; }
         }
     </style>
 </head>
 <body>
 
-    <div id="login-portal">
-        <div class="login-card">
-            <div class="login-logo"><i class="fas fa-leaf"></i> EcoTrack</div>
-            <h2 style="margin-bottom: 1.5rem; font-size: 1.5rem;">Welcome Back</h2>
-            <div class="role-selector">
-                <div class="role-btn active" onclick="setRole('admin', this)">Admin</div>
-                <div class="role-btn" onclick="setRole('driver', this)">Driver</div>
-                <div class="role-btn" onclick="setRole('customer', this)">Customer</div>
-            </div>
-            <form onsubmit="handleLogin(event)">
-                <div class="input-group">
-                    <label>Username</label>
-                    <input type="text" id="username" value="admin" readonly>
-                </div>
-                <div class="input-group">
-                    <label>Password</label>
-                    <input type="password" value="12345" readonly>
-                </div>
-                <button type="submit" class="btn-primary">Sign In</button>
-            </form>
-            <div class="hint"><i class="fas fa-info-circle"></i> Demo Mode: Credentials pre-filled.</div>
-        </div>
-    </div>
-
-    <div id="loading-overlay" class="modal-overlay">
-        <div class="animation-card">
-            <h3 style="margin-bottom: 0.5rem;">Processing Request</h3>
-            <p style="color: var(--text-gray); font-size: 0.9rem;">Please wait while we update the system</p>
-            <ul class="step-list">
-                <li class="step-item" id="step-1"><div class="step-icon"><i class="fas fa-circle-notch"></i></div><span>Locating nearest hub...</span></li>
-                <li class="step-item" id="step-2"><div class="step-icon"><i class="fas fa-circle"></i></div><span>Calculating route...</span></li>
-                <li class="step-item" id="step-3"><div class="step-icon"><i class="fas fa-circle"></i></div><span>Verifying availability...</span></li>
-                <li class="step-item" id="step-4"><div class="step-icon"><i class="fas fa-circle"></i></div><span>Finalizing...</span></li>
+    <nav>
+        <div class="container nav-content">
+            <a href="#" class="logo"><i class="fas fa-leaf"></i> EcoTrack</a>
+            
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#tracking">Track</a></li>
+                <li><a href="#stats">Impact</a></li>
+                <li><a href="app.html" class="btn btn-primary">Login Portal</a></li>
             </ul>
+
+            <div class="mobile-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
         </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-close" onclick="toggleMobileMenu()">
+            <i class="fas fa-times"></i>
+        </div>
+
+        <a href="#features" onclick="toggleMobileMenu()">Features</a>
+        <a href="#tracking" onclick="toggleMobileMenu()">Track Shipment</a>
+        <a href="#stats" onclick="toggleMobileMenu()">Our Impact</a>
+        <a href="app.html" class="btn btn-primary" style="margin-top: 1rem; text-align: center;">Login Portal</a>
     </div>
 
-    <div id="success-overlay" class="modal-overlay">
-        <div class="animation-card">
-            <div class="success-icon"><i class="fas fa-check"></i></div>
-            <h2 style="color: var(--text-dark); margin-bottom: 0.5rem;">Success!</h2>
-            <p id="success-msg" style="color: var(--text-gray); margin-bottom: 1.5rem;">Action completed successfully.</p>
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="hero-text">
+                <h1>Smarter Logistics for a <span>Greener Planet</span></h1>
+                <p>Optimize your supply chain with our AI-driven routing and real-time tracking. Reduce your carbon footprint while ensuring on-time deliveries.</p>
+                <div class="hero-btns">
+                    <a href="#tracking" class="btn btn-primary">Track Shipment</a>
+                    <a href="app.html" class="btn btn-outline" style="color:white; border-color:white;">Login</a>
+                </div>
+            </div>
             
-            <div id="success-details" class="hidden-el" style="background: var(--bg-light); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; text-align: left;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                    <span style="color: var(--text-gray);">Tracking ID:</span>
-                    <strong id="success-id" style="color: var(--primary);">P000</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <span style="color: var(--text-gray);">Est. Cost:</span>
-                    <strong id="success-cost">LKR 0.00</strong>
+            <div class="hero-image">
+                <div class="hero-card">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                        <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white;">AD</div>
+                        <div>
+                            <div style="color: white; font-weight: 600;">System Admin</div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 0.8rem;">Active Session</div>
+                        </div>
+                    </div>
+                    <div style="color: white; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Route Efficiency</span>
+                            <span style="color: var(--primary);">94%</span>
+                        </div>
+                        <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px;">
+                            <div style="width: 94%; height: 100%; background: var(--primary); border-radius: 3px;"></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <div style="flex: 1; background: rgba(255,255,255,0.1); padding: 0.75rem; border-radius: 0.5rem; text-align: center;">
+                            <i class="fas fa-box" style="color: var(--primary); margin-bottom: 0.25rem;"></i>
+                            <div style="color: white; font-size: 0.8rem;">124 Parcels</div>
+                        </div>
+                        <div style="flex: 1; background: rgba(255,255,255,0.1); padding: 0.75rem; border-radius: 0.5rem; text-align: center;">
+                            <i class="fas fa-leaf" style="color: var(--primary); margin-bottom: 0.25rem;"></i>
+                            <div style="color: white; font-size: 0.8rem;">-15% CO₂</div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <button class="btn-primary" onclick="closeSuccessModal()">Close</button>
+    <div class="container" id="tracking">
+        <div class="track-widget">
+            <h3 style="margin-bottom: 0.5rem; color: var(--secondary);">Track Your Parcel</h3>
+            <p style="color: var(--text-gray); font-size: 0.9rem;">Enter your tracking ID to get real-time status updates.</p>
+            <form class="track-form" onsubmit="handlePublicTrack(event)">
+                <input type="text" id="public-track-id" class="track-input" placeholder="Tracking ID (e.g. P001)..." required>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Track Now</button>
+            </form>
+            <div id="track-result" style="margin-top: 1rem; display: none; padding: 1rem; border-radius: 0.5rem; border-left: 4px solid var(--primary);">
+                </div>
         </div>
     </div>
 
-    <div id="app-container" class="hidden">
-        <aside>
-            <div class="brand">
-                <i class="fas fa-leaf"></i>
-                <span>EcoTrack</span>
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose EcoTrack?</h2>
+                <p style="color: var(--text-gray);">We combine advanced logistics technology with environmental responsibility.</p>
             </div>
-            <ul class="nav-links" id="nav-menu"></ul>
-            <div class="user-profile">
-                <div class="avatar" id="user-avatar">AD</div>
-                <div>
-                    <div style="font-weight: 600; font-size: 0.9rem;" id="user-name">Admin User</div>
-                    <div style="font-size: 0.75rem; color: #9CA3AF; text-transform: capitalize;" id="user-role">Administrator</div>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon-box"><i class="fas fa-route"></i></div>
+                    <h3>Smart Routing</h3>
+                    <p>Our algorithms calculate the most efficient paths, reducing fuel consumption and delivery times.</p>
                 </div>
-                <i class="fas fa-sign-out-alt" style="margin-left: auto; cursor: pointer; padding: 0.5rem;" onclick="logout()" title="Logout"></i>
-            </div>
-        </aside>
-
-        <main>
-            <header>
-                <h2 id="page-title">Dashboard</h2>
-                <div style="font-size: 0.9rem; color: var(--text-gray);">
-                    <i class="fas fa-calendar"></i> <span id="current-date"></span>
+                <div class="feature-card">
+                    <div class="icon-box"><i class="fas fa-leaf"></i></div>
+                    <h3>CO₂ Tracking</h3>
+                    <p>Monitor emissions for every delivery. Detailed reports help you meet sustainability goals.</p>
                 </div>
-            </header>
-
-            <div id="view-dashboard" class="section active">
-                <div class="stats-grid" id="stats-container"></div>
-                <h3 style="margin-bottom: 1rem;">Active Parcels</h3>
-                <div class="table-card">
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Tracking ID</th>
-                                    <th>Recipient</th>
-                                    <th>Destination</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="parcel-table-body"></tbody>
-                        </table>
-                    </div>
+                <div class="feature-card">
+                    <div class="icon-box"><i class="fas fa-map-marked-alt"></i></div>
+                    <h3>Real-Time Visibility</h3>
+                    <p>Know exactly where your package is with live GPS updates for admins and customers.</p>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div id="view-jobs" class="section">
-                <h3 style="margin-bottom: 1rem;">Available Jobs (Unassigned)</h3>
-                <div id="jobs-container" class="job-grid">
-                    </div>
-                <div id="no-jobs-msg" style="text-align: center; color: var(--text-gray); display: none; margin-top: 2rem;">
-                    <i class="fas fa-clipboard-check" style="font-size: 3rem; margin-bottom: 1rem; color: #d1d5db;"></i>
-                    <p>No new jobs available at the moment.</p>
+    <section class="stats-strip" id="stats">
+        <div class="container stats-container">
+            <div class="stat-item">
+                <h3>15k+</h3>
+                <p>Parcels Delivered</p>
+            </div>
+            <div class="stat-item">
+                <h3>98%</h3>
+                <p>On-Time Rate</p>
+            </div>
+            <div class="stat-item">
+                <h3>2.5 Tons</h3>
+                <p>CO₂ Saved</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col" style="flex: 2;">
+                    <a href="#" class="logo" style="margin-bottom: 1rem;"><i class="fas fa-leaf"></i> EcoTrack</a>
+                    <p style="color: #9CA3AF; line-height: 1.6; max-width: 300px; font-size: 0.9rem;">
+                        Building a greener future through intelligent logistics.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4 style="margin-bottom:1rem;">Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 style="margin-bottom:1rem;">Contact</h4>
+                    <ul>
+                        <li><a href="#">info@ecotrack.com</a></li>
+                        <li><a href="#">+94 11 234 5678</a></li>
+                    </ul>
                 </div>
             </div>
-
-            <div id="view-booking" class="section">
-                <div class="login-card" style="max-width: 800px; text-align: left; padding: 2rem; margin: 0 auto;">
-                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">Book New Shipment</h3>
-                    <div class="booking-grid">
-                        <div class="input-group">
-                            <label>Recipient Name</label>
-                            <input type="text" id="bk-recipient" placeholder="John Doe">
-                        </div>
-                        <div class="input-group">
-                            <label>Recipient Phone</label>
-                            <input type="tel" id="bk-phone" placeholder="07X XXX XXXX">
-                        </div>
-                        <div class="input-group">
-                            <label>Destination City</label>
-                            <select id="bk-dest">
-                                <option>Colombo</option>
-                                <option>Kandy</option>
-                                <option>Galle</option>
-                                <option>Negombo</option>
-                                <option>Jaffna</option>
-                                <option>Matara</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label>Package Weight (kg)</label>
-                            <input type="number" id="bk-weight" placeholder="1.5">
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <label>Delivery Address</label>
-                        <textarea id="bk-address" rows="3" placeholder="No. 123, Main Street..."></textarea>
-                    </div>
-                    <div style="background: #F0FDF4; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; border: 1px solid #BBF7D0;">
-                        <h4 style="color: var(--primary-dark); font-size: 0.9rem; margin-bottom: 0.25rem;">Estimated Cost</h4>
-                        <p style="font-size: 1.25rem; font-weight: 700; color: var(--text-dark);">LKR <span id="est-cost">450.00</span></p>
-                    </div>
-                    <button class="btn-primary" onclick="submitBooking()">Confirm Booking</button>
-                </div>
+            <div class="copyright">
+                &copy; 2023 EcoTrack Logistics. All rights reserved.
             </div>
+        </div>
+    </footer>
 
-            <div id="view-tracking" class="section">
-                <div class="route-controls">
-                    <input type="text" id="track-search" placeholder="Enter Tracking ID (e.g., P001)" style="padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; width: 300px;">
-                    <button class="btn-primary" style="width: auto; padding: 0.75rem 1.5rem;" onclick="trackSpecificParcel()">Track</button>
-                </div>
-                <div class="map-wrapper">
-                    <div id="map"></div>
-                    <div id="map-overlay" class="route-info hidden" style="display: none;">
-                        <h4><i class="fas fa-truck"></i> Live Status</h4>
-                        <p id="overlay-status">Searching...</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="view-routing" class="section">
-                <div class="route-controls">
-                    <div style="flex: 1;"><strong>Route:</strong> Colombo Warehouse &rarr; Kandy DC</div>
-                    <button class="btn-primary" style="width: auto;" onclick="simulateOptimization()">
-                        <i class="fas fa-magic"></i> Optimize Route (CO₂ Saving)
-                    </button>
-                </div>
-                <div class="route-stats">
-                    <div class="stat-card" style="flex: 1;">
-                        <div class="stat-info"><h3><span id="dist-val">0</span> km</h3><p>Total Distance</p></div>
-                    </div>
-                    <div class="stat-card" style="flex: 1;">
-                        <div class="stat-info"><h3 style="color: var(--primary);"><span id="co2-val">0</span> kg</h3><p>CO₂ Emissions</p></div>
-                    </div>
-                </div>
-                <div id="route-map" style="height: 400px; width: 100%; border-radius: 1rem; z-index: 1;"></div>
-            </div>
-
-            <div id="view-support" class="section">
-                <div class="flex-row">
-                    <div class="flex-col-1" id="support-create-container">
-                        <h3 style="margin-bottom: 1rem;">Create New Ticket</h3>
-                        <div class="login-card" style="max-width: 100%; text-align: left; padding: 1.5rem;">
-                            <div class="input-group"><label>Subject</label><input type="text" id="ticket-subject" placeholder="Delivery Issue..."></div>
-                            <div class="input-group"><label>Priority</label><select id="ticket-priority" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem;"><option>Low</option><option>Medium</option><option>Urgent</option></select></div>
-                            <button class="btn-primary" onclick="addTicket()">Submit Ticket</button>
-                        </div>
-                    </div>
-                    <div class="flex-col-1" style="flex: 2;">
-                        <h3 style="margin-bottom: 1rem;" id="support-list-title">Your Tickets</h3>
-                        <div class="table-card">
-                            <div class="table-responsive">
-                                <table>
-                                    <thead><tr><th>ID</th><th>Subject</th><th>From</th><th>Status</th><th>Action</th></tr></thead>
-                                    <tbody id="ticket-list"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // --- 1. LOCAL STORAGE & DATA INITIALIZATION ---
-        const USERS = {
-            admin: { name: "System Admin", role: "admin", avatar: "SA" },
-            driver: { name: "Kamal Perera", role: "driver", avatar: "KP" },
-            customer: { name: "Nimal Silva", role: "customer", avatar: "NS" }
-        };
-
-        const DEFAULT_PARCELS = [
-            { id: "P001", sender: "Unknown", recipient: "Nimal Silva", dest: "Kandy", status: "In Transit", lat: 7.2906, lng: 80.6337, driver: "Kamal Perera" },
-            { id: "P002", sender: "Unknown", recipient: "Sunil Perera", dest: "Colombo", status: "Delivered", lat: 6.9271, lng: 79.8612, driver: "Kamal Perera" },
-            { id: "P003", sender: "Unknown", recipient: "Anita Diaz", dest: "Galle", status: "Pending", lat: 6.0535, lng: 80.2210, driver: "Unassigned" },
-            { id: "P004", sender: "Unknown", recipient: "Tech Corp", dest: "Negombo", status: "Pending", lat: 7.2008, lng: 79.8737, driver: "Unassigned" }
-        ];
-
-        const DEFAULT_TICKETS = [
-            { id: "T100", subject: "Late Delivery P001", priority: "Medium", status: "Open", from: "Nimal Silva" },
-            { id: "T101", subject: "Wrong Address", priority: "Low", status: "Resolved", from: "Sunil Perera" }
-        ];
-
-        let PARCELS = [];
-        let TICKETS = [];
-        let currentUser = null;
-        let map = null;
-        let routeMap = null;
-        let markers = [];
-
-        // --- 2. DATA PERSISTENCE ---
-        function initData() {
-            const storedParcels = localStorage.getItem('ecotrack_parcels');
-            const storedTickets = localStorage.getItem('ecotrack_tickets');
-
-            if(storedParcels) {
-                PARCELS = JSON.parse(storedParcels);
-            } else {
-                PARCELS = JSON.parse(JSON.stringify(DEFAULT_PARCELS));
-                saveData();
-            }
-
-            if(storedTickets) {
-                TICKETS = JSON.parse(storedTickets);
-            } else {
-                TICKETS = JSON.parse(JSON.stringify(DEFAULT_TICKETS));
-                saveData();
-            }
+        // Toggle Mobile Menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
         }
 
-        function saveData() {
-            localStorage.setItem('ecotrack_parcels', JSON.stringify(PARCELS));
-            localStorage.setItem('ecotrack_tickets', JSON.stringify(TICKETS));
-        }
-
-        // --- 3. LOGIN & APP STATE ---
-        function setRole(role, btnElement) {
-            document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-            if(btnElement) btnElement.classList.add('active');
-            document.getElementById('username').value = role;
-        }
-
-        function handleLogin(e) {
+        // Demo Tracking Functionality
+        function handlePublicTrack(e) {
             e.preventDefault();
-            const username = document.getElementById('username').value;
-            currentUser = USERS[username] || USERS['admin'];
+            const inputField = document.getElementById('public-track-id');
+            const resultBox = document.getElementById('track-result');
             
-            initData();
-
-            document.getElementById('login-portal').style.display = 'none';
-            document.getElementById('app-container').classList.remove('hidden');
-            initDashboard();
-        }
-
-        function logout() { location.reload(); }
-
-        function initDashboard() {
-            document.getElementById('user-name').innerText = currentUser.name;
-            document.getElementById('user-role').innerText = currentUser.role;
-            document.getElementById('user-avatar').innerText = currentUser.avatar;
-            document.getElementById('current-date').innerText = new Date().toLocaleDateString();
+            // Get value and convert to uppercase for case-insensitive check
+            const trackId = inputField.value.trim().toUpperCase();
             
-            generateMenu();
-            loadStats();
-            loadParcelTable();
-            loadTickets();
-            configureSupportView();
-            
-            if(currentUser.role === 'driver') {
-                loadAvailableJobs();
-            }
-        }
+            // Valid IDs allowed
+            const validIds = ['P001', 'P002', 'P003', 'P004'];
 
-        function generateMenu() {
-            const menu = document.getElementById('nav-menu');
-            menu.innerHTML = '';
-            const items = [
-                { id: 'dashboard', icon: 'fa-home', text: 'Dashboard', roles: ['admin', 'driver', 'customer'] },
-                { id: 'booking', icon: 'fa-box', text: 'Book Parcel', roles: ['customer'] },
-                { id: 'jobs', icon: 'fa-briefcase', text: 'Find Jobs', roles: ['driver'] },
-                { id: 'tracking', icon: 'fa-map-marked-alt', text: 'Tracking', roles: ['admin', 'customer'] },
-                { id: 'routing', icon: 'fa-route', text: 'Route Optimization', roles: ['admin', 'driver'] },
-                { id: 'support', icon: 'fa-headset', text: 'Support', roles: ['customer', 'admin'] }
-            ];
-            items.forEach(item => {
-                if (item.roles.includes(currentUser.role)) {
-                    const li = document.createElement('li');
-                    li.className = 'nav-item';
-                    if (item.id === 'dashboard') li.classList.add('active');
-                    li.innerHTML = `<i class="fas ${item.icon}"></i> <span class="nav-text">${item.text}</span>`;
-                    li.onclick = () => switchView(item.id, li);
-                    menu.appendChild(li);
-                }
-            });
-        }
+            // Possible Random Statuses
+            const statuses = ['In Transit', 'Out for Delivery', 'Delivered', 'Processing at Hub'];
 
-        function switchView(viewId, navElement) {
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            if(navElement) navElement.classList.add('active');
-            document.getElementById('page-title').innerText = viewId.charAt(0).toUpperCase() + viewId.slice(1);
-            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
-            document.getElementById(`view-${viewId}`).classList.add('active');
-            
-            if(viewId === 'jobs') loadAvailableJobs();
-            if(viewId === 'dashboard') { loadStats(); loadParcelTable(); }
+            if(trackId) {
+                resultBox.style.display = 'block';
 
-            setTimeout(() => {
-                if (viewId === 'tracking' && map) map.invalidateSize();
-                if (viewId === 'routing' && routeMap) routeMap.invalidateSize();
-            }, 300);
-            if (viewId === 'tracking') initMap();
-            if (viewId === 'routing') initRouteMap();
-        }
+                if (validIds.includes(trackId)) {
+                    // --- SUCCESS CASE ---
+                    // Pick a random status
+                    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+                    
+                    // Style for success (Green)
+                    resultBox.style.background = '#F0FDF4'; 
+                    resultBox.style.borderLeftColor = 'var(--primary)';
 
-        // --- 4. DRIVER JOB BOARD ---
-        function loadAvailableJobs() {
-            const container = document.getElementById('jobs-container');
-            const noJobsMsg = document.getElementById('no-jobs-msg');
-            container.innerHTML = '';
-            
-            const jobs = PARCELS.filter(p => p.driver === "Unassigned");
-
-            if(jobs.length === 0) {
-                noJobsMsg.style.display = 'block';
-            } else {
-                noJobsMsg.style.display = 'none';
-                jobs.forEach(job => {
-                    container.innerHTML += `
-                        <div class="job-card">
-                            <div class="job-header">
-                                <span class="job-id">${job.id}</span>
-                                <span class="status-badge status-unassigned">Open</span>
-                            </div>
-                            <div class="job-details">
-                                <div class="job-row"><i class="fas fa-map-marker-alt" style="width:20px"></i> <span>To: <strong>${job.dest}</strong></span></div>
-                                <div class="job-row"><i class="fas fa-user" style="width:20px"></i> <span>${job.recipient}</span></div>
-                            </div>
-                            <button class="btn-primary" style="background: var(--blue);" onclick="acceptJob('${job.id}')">Accept Job</button>
+                    resultBox.innerHTML = `
+                        <div style="font-weight: 600; color: var(--secondary); margin-bottom: 0.25rem;">
+                            Status Found: <span style="color: var(--primary);">${randomStatus}</span>
+                        </div>
+                        <div style="font-size: 0.9rem; color: var(--text-gray);">
+                            Parcel <strong>${trackId}</strong> is currently on its way. <br>
+                            <a href="app.html" style="color: var(--primary); text-decoration: underline;">Log in for full details</a>
                         </div>
                     `;
-                });
-            }
-        }
-
-        function acceptJob(id) {
-            const parcel = PARCELS.find(p => p.id === id);
-            if(parcel) {
-                parcel.driver = currentUser.name;
-                parcel.status = "Pending";
-                saveData();
-                runSuccessAnimation("Job Accepted", "Added to your dashboard route.");
-                loadAvailableJobs();
-            }
-        }
-
-        // --- 5. BOOKING LOGIC (THE FIX: SENDER TRACKING) ---
-        function submitBooking() {
-            const recipient = document.getElementById('bk-recipient').value;
-            const dest = document.getElementById('bk-dest').value;
-            const weight = document.getElementById('bk-weight').value;
-            
-            if(!recipient || !weight) return alert("Please fill in all details.");
-
-            runLoadingAnimation(() => {
-                const newId = "P" + (Math.floor(Math.random() * 900) + 100);
-                const cost = document.getElementById('est-cost').innerText;
-
-                const newParcel = {
-                    id: newId,
-                    sender: currentUser.name, // Tracking Sender
-                    recipient: recipient, 
-                    dest: dest,
-                    status: "Pending",
-                    lat: 6.9271, 
-                    lng: 79.8612,
-                    driver: "Unassigned"
-                };
-                
-                PARCELS.unshift(newParcel);
-                saveData();
-                
-                // Clear Form
-                document.getElementById('bk-recipient').value = '';
-                document.getElementById('bk-weight').value = '';
-                document.getElementById('bk-address').value = '';
-
-                // Show Success
-                const successDetails = document.getElementById('success-details');
-                successDetails.classList.remove('hidden-el');
-                document.getElementById('success-id').innerText = newId;
-                document.getElementById('success-cost').innerText = "LKR " + cost;
-                
-                runSuccessAnimation("Booking Confirmed!", "Your parcel is now listed for pickup.");
-            });
-        }
-
-        // --- 6. ANIMATION UTILS ---
-        function runLoadingAnimation(callback) {
-            const overlay = document.getElementById('loading-overlay');
-            overlay.classList.add('active');
-
-            for(let i=1; i<=4; i++) {
-                const el = document.getElementById(`step-${i}`);
-                el.className = 'step-item'; 
-                el.querySelector('.step-icon').innerHTML = '<i class="fas fa-circle"></i>';
-            }
-
-            const steps = [
-                { id: 'step-1', time: 500 }, { id: 'step-2', time: 1500 },
-                { id: 'step-3', time: 2500 }, { id: 'step-4', time: 3500 }
-            ];
-
-            steps.forEach((step, index) => {
-                setTimeout(() => {
-                    const el = document.getElementById(step.id);
-                    el.classList.add('active');
-                    el.querySelector('.step-icon').innerHTML = '<i class="fas fa-spinner spinner"></i>';
-                    if(index > 0) {
-                        const prev = document.getElementById(steps[index-1].id);
-                        prev.classList.remove('active'); prev.classList.add('completed');
-                        prev.querySelector('.step-icon').innerHTML = '<i class="fas fa-check"></i>';
-                    }
-                }, step.time);
-            });
-
-            setTimeout(() => {
-                overlay.classList.remove('active');
-                callback();
-            }, 4000);
-        }
-
-        function runSuccessAnimation(title, msg) {
-            const overlay = document.getElementById('success-overlay');
-            document.querySelector('#success-overlay h2').innerText = title;
-            document.getElementById('success-msg').innerText = msg;
-            overlay.classList.add('active');
-        }
-
-        function closeSuccessModal() {
-            document.getElementById('success-overlay').classList.remove('active');
-            document.getElementById('success-details').classList.add('hidden-el');
-            
-            // Redirect to Dashboard and Force Reload
-            const menu = document.getElementById('nav-menu');
-            const dashNav = menu.firstElementChild; 
-            switchView('dashboard', dashNav);
-        }
-
-        // --- 7. DASHBOARD DATA & TABLE (THE FIX: FILTER LOGIC) ---
-        function loadStats() {
-            const container = document.getElementById('stats-container');
-            container.innerHTML = '';
-            let stats = [];
-            
-            if (currentUser.role === 'admin') {
-                stats = [ 
-                    { label: 'Total Parcels', val: PARCELS.length, icon: 'fa-box' }, 
-                    { label: 'Unassigned', val: PARCELS.filter(p=>p.driver==='Unassigned').length, icon: 'fa-exclamation-circle' }, 
-                    { label: 'Open Tickets', val: TICKETS.filter(t=>t.status==='Open').length, icon: 'fa-headset' } 
-                ];
-            } else if (currentUser.role === 'driver') {
-                const assigned = PARCELS.filter(p => p.driver === currentUser.name);
-                stats = [ 
-                    { label: 'My Route', val: assigned.length, icon: 'fa-route' }, 
-                    { label: 'Completed', val: assigned.filter(p=>p.status==='Delivered').length, icon: 'fa-check-circle' } 
-                ];
-            } else {
-                // Customer Stats: Incoming OR Outgoing
-                const myParcels = PARCELS.filter(p => p.recipient === currentUser.name || p.sender === currentUser.name);
-                stats = [ 
-                    { label: 'My Parcels', val: myParcels.length, icon: 'fa-box' }, 
-                    { label: 'Active', val: myParcels.filter(p => p.status !== 'Delivered').length, icon: 'fa-shipping-fast' } 
-                ];
-            }
-            stats.forEach(s => { container.innerHTML += `<div class="stat-card"><div class="stat-info"><h3>${s.val}</h3><p>${s.label}</p></div><div class="stat-icon"><i class="fas ${s.icon}"></i></div></div>`; });
-        }
-
-        function loadParcelTable() {
-            const tbody = document.getElementById('parcel-table-body');
-            tbody.innerHTML = '';
-            let data = PARCELS;
-            
-            // Filter logic
-            if (currentUser.role === 'customer') {
-                // Show parcels where user is RECIPIENT or SENDER
-                data = PARCELS.filter(p => p.recipient === currentUser.name || p.sender === currentUser.name);
-            } 
-            else if (currentUser.role === 'driver') {
-                data = PARCELS.filter(p => p.driver === currentUser.name);
-            }
-
-            data.forEach(p => {
-                let badgeClass = '';
-                if(p.driver === 'Unassigned') badgeClass = 'status-unassigned';
-                else if(p.status === 'In Transit') badgeClass = 'status-transit';
-                else if(p.status === 'Delivered') badgeClass = 'status-delivered';
-                else badgeClass = 'status-pending';
-
-                let actionHtml = '';
-                if (currentUser.role === 'driver') {
-                    actionHtml = `<div style="display:flex; gap:0.5rem; align-items:center;"><select class="status-select" id="status-${p.id}"><option value="Pending" ${p.status==='Pending'?'selected':''}>Pending</option><option value="In Transit" ${p.status==='In Transit'?'selected':''}>In Transit</option><option value="Delivered" ${p.status==='Delivered'?'selected':''}>Delivered</option></select><button class="btn-primary btn-sm" onclick="updateParcelStatus('${p.id}')"><i class="fas fa-save"></i></button></div>`;
-                } else if(currentUser.role === 'admin' && p.driver === 'Unassigned') {
-                     actionHtml = `<span style="color:#92400E; font-size:0.8rem;">Needs Driver</span>`;
                 } else {
-                    actionHtml = `<button class="btn-primary btn-sm" onclick="goToTracking('${p.id}')">Track</button>`;
+                    // --- ERROR CASE ---
+                    // Style for error (Red)
+                    resultBox.style.background = '#FEF2F2';
+                    resultBox.style.borderLeftColor = '#EF4444';
+
+                    resultBox.innerHTML = `
+                        <div style="font-weight: 600; color: #991B1B; margin-bottom: 0.25rem;">
+                            <i class="fas fa-exclamation-circle"></i> Item Not Found
+                        </div>
+                        <div style="font-size: 0.9rem; color: #B91C1C;">
+                            The Tracking ID <strong>${inputField.value}</strong> does not exist in our system.
+                        </div>
+                    `;
                 }
-                
-                let destDisplay = p.dest;
-                if(currentUser.role === 'admin') destDisplay += `<br><span style="font-size:0.7rem; color:#aaa;">${p.driver}</span>`;
-
-                tbody.innerHTML += `<tr><td><strong>${p.id}</strong></td><td>${p.recipient}</td><td>${destDisplay}</td><td><span class="status-badge ${badgeClass}" id="badge-${p.id}">${p.status}</span></td><td>${actionHtml}</td></tr>`;
-            });
-        }
-
-        function updateParcelStatus(id) {
-            const newStatus = document.getElementById(`status-${id}`).value;
-            const parcel = PARCELS.find(p => p.id === id);
-            if(parcel) {
-                parcel.status = newStatus;
-                saveData();
-                const badge = document.getElementById(`badge-${id}`);
-                badge.innerText = newStatus;
-                badge.className = `status-badge ${newStatus === 'In Transit' ? 'status-transit' : newStatus === 'Delivered' ? 'status-delivered' : 'status-pending'}`;
-                loadStats();
-                alert(`Status updated to ${newStatus}`);
             }
         }
-
-        function goToTracking(pid) {
-            const menu = document.getElementById('nav-menu');
-            const trackingNav = Array.from(menu.children).find(li => li.innerHTML.includes('fa-map-marked-alt'));
-            if(trackingNav) {
-                switchView('tracking', trackingNav);
-                setTimeout(() => { document.getElementById('track-search').value = pid; trackSpecificParcel(); }, 500);
-            }
-        }
-
-        function trackSpecificParcel() {
-            const id = document.getElementById('track-search').value.trim();
-            const parcel = PARCELS.find(p => p.id === id);
-            if (parcel) {
-                markers.forEach(m => map.removeLayer(m));
-                markers = [];
-                const m = L.marker([parcel.lat, parcel.lng]).addTo(map).bindPopup(`<b>${parcel.id}</b><br>Status: ${parcel.status}`).openPopup();
-                markers.push(m);
-                map.setView([parcel.lat, parcel.lng], 13);
-                document.getElementById('map-overlay').style.display = 'block';
-                document.getElementById('overlay-status').innerHTML = `<strong>Status:</strong> ${parcel.status}<br><strong>Driver:</strong> ${parcel.driver}<br><strong>Loc:</strong> ${parcel.lat.toFixed(4)}, ${parcel.lng.toFixed(4)}`;
-            } else { alert('Parcel ID not found!'); }
-        }
-
-        function initMap() { setTimeout(() => { if (map) { map.invalidateSize(); return; } map = L.map('map').setView([7.8731, 80.7718], 7); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); if(currentUser.role === 'admin') PARCELS.forEach(p => { if(p.lat) L.marker([p.lat, p.lng]).addTo(map); }); }, 100); }
-        function initRouteMap() { setTimeout(() => { if (routeMap) { routeMap.invalidateSize(); return; } routeMap = L.map('route-map').setView([7.2, 80.2], 9); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(routeMap); L.marker([6.9271, 79.8612]).addTo(routeMap); L.marker([7.2906, 80.6337]).addTo(routeMap); }, 100); }
-        function simulateOptimization() { const latlngs = [[6.9271, 79.8612], [7.0, 80.0], [7.15, 80.3], [7.2906, 80.6337]]; L.polyline(latlngs, {color: 'red', dashArray: '10, 10', opacity: 0.5}).addTo(routeMap); setTimeout(() => { const optimized = [[6.9271, 79.8612], [6.98, 79.9], [7.2, 80.4], [7.2906, 80.6337]]; const ecoLine = L.polyline(optimized, {color: 'green', weight: 5}).addTo(routeMap); routeMap.fitBounds(ecoLine.getBounds()); animateValue("dist-val", 0, 115, 1000); animateValue("co2-val", 0, 14.5, 1000); }, 500); }
-        function animateValue(id, start, end, duration) { let obj = document.getElementById(id); let startTimestamp = null; const step = (timestamp) => { if (!startTimestamp) startTimestamp = timestamp; const progress = Math.min((timestamp - startTimestamp) / duration, 1); obj.innerHTML = (progress * (end - start) + start).toFixed(1); if (progress < 1) window.requestAnimationFrame(step); }; window.requestAnimationFrame(step); }
-
-        function configureSupportView() {
-            const createContainer = document.getElementById('support-create-container');
-            const listTitle = document.getElementById('support-list-title');
-            if (currentUser.role === 'admin') { createContainer.classList.add('hidden-el'); listTitle.innerText = "Customer Inquiries"; } 
-            else { createContainer.classList.remove('hidden-el'); listTitle.innerText = "Your Tickets"; }
-        }
-        function loadTickets() {
-            const list = document.getElementById('ticket-list'); list.innerHTML = '';
-            const visibleTickets = currentUser.role === 'admin' ? TICKETS : TICKETS.filter(t => t.from === currentUser.name);
-            visibleTickets.forEach(t => {
-                let actionBtn = (currentUser.role === 'admin' && t.status === 'Open') ? `<button class="btn-primary btn-sm" onclick="respondToTicket('${t.id}')">Respond</button>` : '-';
-                list.innerHTML += `<tr><td>${t.id}</td><td>${t.subject}</td><td>${t.from}</td><td><span class="status-badge ${t.status==='Open'?'status-pending':'status-resolved'}">${t.status}</span></td><td>${actionBtn}</td></tr>`;
-            });
-        }
-        function addTicket() { 
-            const subj = document.getElementById('ticket-subject').value; 
-            if(!subj) return alert("Subject required"); 
-            TICKETS.unshift({ id: "T"+(Math.floor(Math.random()*900)+100), subject: subj, priority: document.getElementById('ticket-priority').value, status: "Open", from: currentUser.name }); 
-            saveData();
-            document.getElementById('ticket-subject').value=''; 
-            loadTickets(); 
-            loadStats(); 
-        }
-        function respondToTicket(id) { const res = prompt("Reply:"); if(res) { TICKETS.find(t=>t.id===id).status="Resolved"; saveData(); loadTickets(); loadStats(); } }
-
-        document.getElementById('bk-weight').addEventListener('input', function(e) { document.getElementById('est-cost').innerText = (300 + ((parseFloat(e.target.value)||0)*100)).toFixed(2); });
     </script>
 </body>
 </html>
