@@ -57,6 +57,18 @@
         .mobile-menu.active { right: 0; }
         .mobile-menu a { color: white; text-decoration: none; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; }
 
+        /* Mobile Close Button */
+        .mobile-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .mobile-close:hover { color: var(--primary); }
+
         /* --- HERO SECTION --- */
         .hero {
             background: linear-gradient(135deg, var(--secondary) 0%, #111827 100%);
@@ -186,6 +198,10 @@
     </nav>
 
     <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-close" onclick="toggleMobileMenu()">
+            <i class="fas fa-times"></i>
+        </div>
+
         <a href="#features" onclick="toggleMobileMenu()">Features</a>
         <a href="#tracking" onclick="toggleMobileMenu()">Track Shipment</a>
         <a href="#stats" onclick="toggleMobileMenu()">Our Impact</a>
@@ -199,7 +215,7 @@
                 <p>Optimize your supply chain with our AI-driven routing and real-time tracking. Reduce your carbon footprint while ensuring on-time deliveries.</p>
                 <div class="hero-btns">
                     <a href="#tracking" class="btn btn-primary">Track Shipment</a>
-                    <a href="app.html" class="btn btn-outline" style="color:white; border-color:white;">Driver Login</a>
+                    <a href="app.html" class="btn btn-outline" style="color:white; border-color:white;">Login</a>
                 </div>
             </div>
             
